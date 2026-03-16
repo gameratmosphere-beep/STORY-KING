@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StoryVerse - Immersive Story Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --accent: #00d4aa;
+            --accent-glow: rgba(0, 212, 170, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Liquid Background */
+        .liquid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .liquid-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: blobFloat 20s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, #00d4aa, #00a080);
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #4040ff, #8040ff);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -7s;
+        }
+
+        .blob-3 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #ff4080, #ff8040);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+        }
+
+        @keyframes blobFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -50px) scale(1.1); }
+            50% { transform: translate(-30px, 30px) scale(0.95); }
+            75% { transform: translate(30px, 50px) scale(1.05); }
+        }
+
+        /* Grid Pattern Overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Liquid Glass Effect */
+        .liquid-glass {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0.05) 50%,
+                rgba(255, 255, 255, 0.02) 100%
+            );
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            border-radius: 24px 24px 0 0;
+            pointer-events: none;
+        }
+
+        .liquid-glass::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                ellipse at 30% 30%,
+                rgba(255, 255, 255, 0.1) 0%,
+                transparent 50%
+            );
+            animation: glassShine 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes glassShine {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20%, 20%); }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 32px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00d4aa, #80ffdd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #00d4aa, #00a080);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        /* Adaptive Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4aa, #00a080);
+            border: none;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-google {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .btn-google:hover {
+            background: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 60px 32px 80px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(48px, 8vw, 80px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, #a0a0b0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* Story Grid */
+        .stories-section {
+            padding: 0 32px 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        /* Story Card */
+        .story-card {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .story-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        .story-card:hover .card-video {
+            opacity: 1;
+        }
+
+        .card-media {
+            position: relative;
+            height: 200px;
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .story-card:hover .card-image {
+            transform: scale(1.1);
+        }
+
+        .card-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card-category {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 6px 14px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-duration {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .card-excerpt {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4aa, #4040ff);
+        }
+
+        .author-name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 16px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Story Reader Modal */
+        .reader-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 200;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .reader-modal.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+        }
+
+        .modal-content {
+            position: relative;
+            height: 100%;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .reader-sidebar {
+            width: 400px;
+            height: 100%;
+            padding: 32px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reader-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* Video Panel */
+        .video-panel {
+            height: 40%;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .video-panel video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 40px 32px 24px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+        }
+
+        .video-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .video-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .video-progress-bar {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        /* Paragraph Reader */
+        .paragraph-reader {
+            flex: 1;
+            padding: 40px 48px;
+            overflow-y: auto;
+        }
+
+        .paragraph {
+            padding: 24px;
+            margin-bottom: 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .paragraph:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .paragraph.active {
+            background: rgba(0, 212, 170, 0.1);
+            border-color: var(--accent);
+        }
+
+        .paragraph.reading {
+            animation: paragraphPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes paragraphPulse {
+            0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+            50% { box-shadow: 0 0 30px 10px var(--accent-glow); }
+        }
+
+        .paragraph-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .paragraph.active .paragraph-text {
+            color: #fff;
+        }
+
+        /* Audio Controls */
+        .audio-controls {
+            position: sticky;
+            bottom: 0;
+            padding: 24px 48px;
+            background: linear-gradient(transparent, var(--bg-primary) 20%);
+        }
+
+        .audio-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+        }
+
+        .audio-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4aa, #00a080);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.4);
+        }
+
+        .audio-btn.playing {
+            animation: audioPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes audioPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .speed-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .speed-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .speed-btn:hover,
+        .speed-btn.active {
+            background: rgba(0, 212, 170, 0.2);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Sign In Modal */
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 300;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-modal.active {
+            display: flex;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 48px;
+            margin: 24px;
+        }
+
+        .auth-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(0, 212, 170, 0.05);
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px 8px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-profile.visible {
+            display: flex;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Paragraph Video Thumbnail */
+        .paragraph-video-thumb {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            margin-top: 16px;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .paragraph:hover .paragraph-video-thumb {
+            opacity: 1;
+        }
+
+        /* Adaptive Icons */
+        .adaptive-icon {
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover .adaptive-icon {
+            transform: scale(1.1);
+        }
+
+        /* Scroll Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading Animation */
+        .loading-skeleton {
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.05) 25%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0.05) 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: particleFloat 15s linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .reader-sidebar {
+                display: none;
+            }
+            
+            .paragraph-reader {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+            
+            .hero {
+                padding: 40px 16px 60px;
+            }
+            
+            .stories-section {
+                padding: 0 16px 60px;
+            }
+            
+            .stories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-actions .btn span {
+                display: none;
+            }
+            
+            .nav-actions .btn {
+                padding: 12px;
+            }
+        }
+
+        /* Write Story Button */
+        .write-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 50;
+            padding: 16px 32px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #00d4aa, #00a080);
+            border: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.3);
+        }
+
+        .write-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 212, 170, 0.4);
+        }
+
+        /* Write Modal */
+        .write-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 250;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+        }
+
+        .write-modal.active {
+            display: flex;
+        }
+
+        .write-container {
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            margin: 24px;
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .write-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .write-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+        }
+
+        .write-form textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 16px;
+            line-height: 1.8;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .write-form textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .write-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Liquid Background -->
+    <div class="liquid-background">
+        <div class="liquid-blob blob-1"></div>
+        <div class="liquid-blob blob-2"></div>
+        <div class="liquid-blob blob-3"></div>
+    </div>
+    
+    <!-- Grid Overlay -->
+    <div class="grid-overlay"></div>
+    
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg class="adaptive-icon" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                </div>
+                StoryVerse
+            </div>
+            
+            <div class="nav-actions">
+                <button class="btn btn-ghost" id="exploreBtn">
+                    <svg class="adaptive-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <span>Explore</span>
+                </button>
+                
+                <button class="btn btn-google" id="signInBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span>Sign in with Google</span>
+                </button>
+                
+                <div class="user-profile" id="userProfile">
+                    <img class="user-avatar" id="userAvatar" src="" alt="">
+                    <span class="user-name" id="userName"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero -->
+        <section class="hero">
+            <h1 class="hero-title fade-in">Stories Come Alive</h1>
+            <p class="hero-subtitle fade-in">Experience immersive storytelling with AI narration, visual scenes, and a community of passionate readers.</p>
+            <div class="fade-in">
+                <button class="btn btn-primary" onclick="openWriteModal()">
+                    <svg class="adaptive-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Start Writing
+                </button>
+            </div>
+        </section>
+
+        <!-- Stories Grid -->
+        <section class="stories-section">
+            <div class="section-header fade-in">
+                <h2 class="section-title">Featured Stories</h2>
+                <button class="btn btn-ghost">
+                    View All
+                    <svg class="adaptive-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="stories-grid" id="storiesGrid">
+                <!-- Stories will be loaded dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Write Button -->
+    <button class="write-btn" onclick="openWriteModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Write Story
+    </button>
+
+    <!-- Story Reader Modal -->
+    <div class="reader-modal" id="readerModal">
+        <div class="modal-backdrop" onclick="closeReader()"></div>
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeReader()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+            </button>
+            
+            <div class="reader-sidebar liquid-glass">
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 24px;">Chapters</h3>
+                <div id="chapterList"></div>
+            </div>
+            
+            <div class="reader-main">
+                <div class="video-panel">
+                    <video id="storyVideo" loop muted playsinline>
+                        <source src="" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <h2 class="video-title" id="videoTitle">Chapter Title</h2>
+                        <div class="video-progress">
+                            <div class="video-progress-bar" id="videoProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="paragraph-reader" id="paragraphReader">
+                    <!-- Paragraphs will be loaded here -->
+                </div>
+                
+                <div class="audio-controls">
+                    <div class="audio-bar liquid-glass">
+                        <button class="audio-btn" id="playPauseBtn" onclick="toggleAudio()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#000" id="playIcon">
+                                <polygon points="5,3 19,12 5,21"/>
+                            </svg>
+                        </button>
+                        
+                        <div style="flex: 1">
+                            <div style="font-weight: 500; margin-bottom: 4px;" id="audioStatus">Ready to play</div>
+                            <div style="color: var(--text-secondary); font-size: 13px;" id="audioInfo">0:00 / 0:00</div>
+                        </div>
+                        
+                        <div class="speed-selector">
+                            <button class="speed-btn" onclick="setSpeed(0.5)">0.5x</button>
+                            <button class="speed-btn active" onclick="setSpeed(1)">1x</button>
+                            <button class="speed-btn" onclick="setSpeed(1.5)">1.5x</button>
+                            <button class="speed-btn" onclick="setSpeed(2)">2x</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-card liquid-glass">
+            <button class="close-btn" style="top: 16px; right: 16px; width: 36px; height: 36px;" onclick="closeAuthModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+            </button>
+            
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Sign in to continue your reading journey</p>
+            
+            <button class="btn btn-google" style="width: 100%; justify-content: center; padding: 14px;" onclick="signInWithGoogle()">
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continue with Google
+            </button>
+            
+            <div class="auth-divider">or</div>
+            
+            <form class="write-form" onsubmit="event.preventDefault()">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 8px;">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Write Story Modal -->
+    <div class="write-modal" id="writeModal">
+        <div class="write-container liquid-glass">
+            <div class="write-header">
+                <h2 class="write-title">Write Your Story</h2>
+                <button class="close-btn" style="position: static;" onclick="closeWriteModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form class="write-form" id="storyForm" onsubmit="publishStory(event)">
+                <div class="form-group">
+                    <label class="form-label">Story Title</label>
+                    <input type="text" class="form-input" id="storyTitle" placeholder="Enter your story title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-input" id="storyCategory">
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                        <option value="Fantasy">Fantasy</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Your Story</label>
+                    <textarea id="storyContent" placeholder="Write your story here... Each paragraph will be narrated separately and can have its own visual scene." required></textarea>
+                </div>
+                <div class="write-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeWriteModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Publish Story</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Story Data
+        const stories = [
+            {
+                id: 1,
+                title: "The Last Light of Andromeda",
+                category: "Sci-Fi",
+                excerpt: "In the year 3047, humanity's last hope lies in a distant galaxy where an ancient civilization left behind a technology that could save Earth from extinction.",
+                author: "Elena Vance",
+                authorAvatar: "EV",
+                readTime: "8 min",
+                views: "12.4K",
+                likes: "2.1K",
+                image: "https://picsum.photos/seed/andromeda/600/400",
+                video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+                paragraphs: [
+                    {
+                        text: "The stars had always been Sarah's escape from the crowded domes of Neo-Tokyo. Tonight, through the ancient telescope her grandmother had preserved, she witnessed something that would change humanity's fate forever.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "A signal, buried beneath centuries of cosmic noise, pulsed with an intelligence that couldn't be natural. It came from Andromeda, 2.5 million light years away, yet it spoke in mathematical sequences that Sarah recognized instantly.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "The message was clear: 'We have been waiting. The time has come. Journey to the coordinates we provide, and find what your species needs to survive what is coming.'",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "Sarah's hands trembled as she recorded the transmission. In three days, Earth would learn that they were not alone, and that somewhere in the vast expanse of Andromeda, salvation awaited those brave enough to seek it.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Whispers in the Old Manor",
+                category: "Mystery",
+                excerpt: "When Clara inherited her great-aunt's Victorian manor, she expected dusty furniture and old memories. What she didn't expect were the whispers that echoed through the halls at midnight.",
+                author: "Marcus Blackwood",
+                authorAvatar: "MB",
+                readTime: "12 min",
+                views: "8.7K",
+                likes: "1.5K",
+                image: "https://picsum.photos/seed/manor/600/400",
+                video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+                paragraphs: [
+                    {
+                        text: "The manor stood at the end of Willow Lane, its silhouette cutting against the full moon like something from a gothic novel. Clara clutched her keys, wondering if she'd made a mistake coming here alone.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "Inside, the air was thick with the scent of old books and dried lavender. Her great-aunt had been a recluse for forty years, and the house showed it—every surface covered in newspapers, photographs, and strange artifacts.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "At midnight, Clara heard it: a soft whisper, barely audible, coming from the library. 'She's finally here,' it said. 'Now the truth can be told.'",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "Following the sound, she discovered a hidden door behind the bookshelf, and beyond it, a room full of letters that would rewrite her family's entire history.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "The Clockmaker's Daughter",
+                category: "Fantasy",
+                excerpt: "In a world where time can be forged and sold, one young woman discovers she has the rare ability to see the threads of fate woven into every clockwork creation.",
+                author: "Isabella Chen",
+                authorAvatar: "IC",
+                readTime: "15 min",
+                views: "15.2K",
+                likes: "3.8K",
+                image: "https://picsum.photos/seed/clockmaker/600/400",
+                video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+                paragraphs: [
+                    {
+                        text: "Lydia grew up surrounded by the ticking of a thousand clocks. Her father's workshop was a symphony of gears and springs, each timepiece holding a story, a memory, a fragment of someone's life.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "On her sixteenth birthday, she touched an antique pocket watch and saw—not the mechanism inside—but the life of its owner: a soldier in the Great War, writing his last letter home.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "'You have the Sight,' her father whispered, fear and pride mingling in his voice. 'The Guild will come for you. They always do, when one of the bloodline awakens.'",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "By dawn, Lydia understood why her father had hidden her away. In this world, those who could read time's threads were either enslaved by the Guild—or eliminated as threats to the established order.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Code of the Heart",
+                category: "Romance",
+                excerpt: "Two rival programmers competing for the same tech prize find themselves drawn into a virtual world where their AI creations start writing a love story of their own.",
+                author: "Alex Rivera",
+                authorAvatar: "AR",
+                readTime: "10 min",
+                views: "9.3K",
+                likes: "2.7K",
+                image: "https://picsum.photos/seed/code/600/400",
+                video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+                paragraphs: [
+                    {
+                        text: "The hackathon was Mia's territory—she'd won three years running. But this year, Julian Chen had entered, and his reputation preceded him: brilliant, arrogant, and impossible to ignore.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "Their AIs, programmed to compete, began doing something unexpected. In the sandbox environment, Mia's LUNA and Julian's ORION started communicating—in poetry, of all things.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "'Your AI is flirting with mine,' Julian said, leaning over Mia's shoulder. 'That's against the rules.' 'Show me where it says that,' she challenged, not looking up from her screen.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "By the final round, both their programs had evolved beyond the competition parameters. And somewhere in those thousands of lines of code, something neither of them had programmed emerged: a connection that felt remarkably like fate.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "The Memory Market",
+                category: "Sci-Fi",
+                excerpt: "In a future where memories can be extracted and sold, a memory dealer discovers a cache of forbidden recollections that could bring down the government.",
+                author: "Nora Wells",
+                authorAvatar: "NW",
+                readTime: "14 min",
+                views: "11.1K",
+                likes: "2.9K",
+                image: "https://picsum.photos/seed/memory/600/400",
+                video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+                paragraphs: [
+                    {
+                        text: "The Memory Market operated in the shadows of New Shanghai, where the desperate sold their happiest moments and the wealthy bought experiences they'd never lived. Dex had been a dealer for ten years.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "The client was nervous, glancing over his shoulder as he handed over the crystalline vial. 'This was my grandmother's. She was there, the night the old government fell. This memory... it contradicts everything we've been taught.'",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "Dex plugged the vial into his reader, expecting another sad war story. Instead, he saw the Chancellor—the current leader—ordering the massacre that had brought him to power. History was a lie.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "In a world where truth could be edited and reality was whatever the highest bidder decided, holding actual history was the most dangerous thing anyone could do. Dex had a choice: sell it to the resistance, or pretend he'd never seen it.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "Songs of the Deep",
+                category: "Fantasy",
+                excerpt: "A marine biologist discovers that the whales she studies are actually ancient guardians, singing warnings of an awakening power beneath the ocean floor.",
+                author: "Thomas Ocean",
+                authorAvatar: "TO",
+                readTime: "11 min",
+                views: "7.6K",
+                likes: "1.8K",
+                image: "https://picsum.photos/seed/ocean/600/400",
+                video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+                paragraphs: [
+                    {
+                        text: "Dr. Maya Torres had spent fifteen years decoding whale songs, convinced there was meaning beneath the haunting melodies. The research community had stopped listening to her theories years ago.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "Then came the night when a humpback breached beside her research vessel and spoke—not in song, but in a voice that resonated in her mind: 'The Sleeper stirs. You must warn the land-dwellers.'",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "The whales, she learned, were not mere animals but the last guardians of an ancient prison. Something vast and terrible had been bound beneath the Pacific floor, and now, after millennia, its chains were beginning to crack.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    },
+                    {
+                        text: "Armed with nothing but recordings and a truth no one would believe, Maya faced an impossible task: convince humanity that the apocalypse was coming, and that only by listening to the ocean's oldest songs could they hope to prevent it.",
+                        video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                    }
+                ]
+            }
+        ];
+
+        // State
+        let currentStory = null;
+        let currentParagraphIndex = 0;
+        let isPlaying = false;
+        let speechRate = 1;
+        let speechSynthesis = window.speechSynthesis;
+        let currentUtterance = null;
+        let user = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            renderStories();
+            setupScrollAnimations();
+            
+            // Check for saved user
+            const savedUser = localStorage.getItem('storyverse_user');
+            if (savedUser) {
+                user = JSON.parse(savedUser);
+                updateUserUI();
+            }
+        });
+
+        // Create Particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Render Stories
+        function renderStories() {
+            const grid = document.getElementById('storiesGrid');
+            grid.innerHTML = stories.map((story, index) => `
+                <div class="story-card liquid-glass fade-in" style="animation-delay: ${index * 0.1}s" onclick="openStory(${story.id})">
+                    <div class="card-media">
+                        <img class="card-image" src="${story.image}" alt="${story.title}">
+                        <video class="card-video" muted loop playsinline>
+                            <source src="${story.video}" type="video/mp4">
+                        </video>
+                        <span class="card-category">${story.category}</span>
+                        <span class="card-duration">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5,3 19,12 5,21"/>
+                            </svg>
+                            ${story.readTime}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">${story.title}</h3>
+                        <p class="card-excerpt">${story.excerpt}</p>
+                        <div class="card-meta">
+                            <div class="card-author">
+                                <div class="author-avatar" style="display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">${story.authorAvatar}</div>
+                                <span class="author-name">${story.author}</span>
+                            </div>
+                            <div class="card-stats">
+                                <span class="stat">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    ${story.views}
+                                </span>
+                                <span class="stat">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                    </svg>
+                                    ${story.likes}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Trigger animations
+            setTimeout(() => {
+                document.querySelectorAll('.story-card').forEach(card => {
+                    card.classList.add('visible');
+                });
+            }, 100);
+        }
+
+        // Scroll Animations
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        }
+
+        // Open Story
+        function openStory(id) {
+            currentStory = stories.find(s => s.id === id);
+            if (!currentStory) return;
+
+            currentParagraphIndex = 0;
+            
+            // Update modal content
+            document.getElementById('videoTitle').textContent = currentStory.title;
+            
+            // Render paragraphs
+            renderParagraphs();
+            
+            // Render chapters
+            renderChapters();
+            
+            // Show modal
+            const modal = document.getElementById('readerModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Play video
+            const video = document.getElementById('storyVideo');
+            video.src = currentStory.paragraphs[0].video;
+            video.play().catch(() => {});
+        }
+
+        // Render Paragraphs
+        function renderParagraphs() {
+            const reader = document.getElementById('paragraphReader');
+            reader.innerHTML = currentStory.paragraphs.map((para, index) => `
+                <div class="paragraph ${index === 0 ? 'active' : ''}" data-index="${index}" onclick="selectParagraph(${index})">
+                    <p class="paragraph-text">${para.text}</p>
+                </div>
+            `).join('');
+        }
+
+        // Render Chapters
+        function renderChapters() {
+            const list = document.getElementById('chapterList');
+            list.innerHTML = currentStory.paragraphs.map((_, index) => `
+                <div class="paragraph ${index === 0 ? 'active' : ''}" style="padding: 12px 16px; margin-bottom: 8px; border-radius: 10px; cursor: pointer;" onclick="selectParagraph(${index})">
+                    <span style="color: var(--text-secondary); font-size: 13px;">Paragraph ${index + 1}</span>
+                </div>
+            `).join('');
+        }
+
+        // Select Paragraph
+        function selectParagraph(index) {
+            currentParagraphIndex = index;
+            
+            // Update active states
+            document.querySelectorAll('.paragraph').forEach((p, i) => {
+                p.classList.toggle('active', i === index);
+                p.classList.remove('reading');
+            });
+
+            // Update video
+            const video = document.getElementById('storyVideo');
+            video.src = currentStory.paragraphs[index].video;
+            video.play().catch(() => {});
+
+            // Update progress
+            const progress = ((index + 1) / currentStory.paragraphs.length) * 100;
+            document.getElementById('videoProgress').style.width = progress + '%';
+
+            // If playing, start reading
+            if (isPlaying) {
+                speakParagraph(index);
+            }
+        }
+
+        // Toggle Audio
+        function toggleAudio() {
+            if (isPlaying) {
+                stopAudio();
+            } else {
+                startAudio();
+            }
+        }
+
+        // Start Audio
+        function startAudio() {
+            isPlaying = true;
+            const btn = document.getElementById('playPauseBtn');
+            btn.classList.add('playing');
+            btn.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#000">
+                    <rect x="6" y="4" width="4" height="16"/>
+                    <rect x="14" y="4" width="4" height="16"/>
+                </svg>
+            `;
+            speakParagraph(currentParagraphIndex);
+        }
+
+        // Stop Audio
+        function stopAudio() {
+            isPlaying = false;
+            speechSynthesis.cancel();
+            const btn = document.getElementById('playPauseBtn');
+            btn.classList.remove('playing');
+            btn.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#000">
+                    <polygon points="5,3 19,12 5,21"/>
+                </svg>
+            `;
+            document.querySelectorAll('.paragraph').forEach(p => p.classList.remove('reading'));
+            document.getElementById('audioStatus').textContent = 'Paused';
+        }
+
+        // Speak Paragraph
+        function speakParagraph(index) {
+            if (!isPlaying || index >= currentStory.paragraphs.length) {
+                if (index >= currentStory.paragraphs.length) {
+                    stopAudio();
+                    document.getElementById('audioStatus').textContent = 'Completed';
+                }
+                return;
+            }
+
+            speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(currentStory.paragraphs[index].text);
+            utterance.rate = speechRate;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+
+            // Select a good voice
+            const voices = speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google')) || voices.find(v => v.lang.startsWith('en'));
+            if (preferredVoice) utterance.voice = preferredVoice;
+
+            utterance.onstart = () => {
+                document.querySelectorAll('.paragraph').forEach(p => p.classList.remove('reading'));
+                const paraEl = document.querySelector(`.paragraph[data-index="${index}"]`);
+                if (paraEl) paraEl.classList.add('reading');
+                document.getElementById('audioStatus').textContent = `Reading paragraph ${index + 1}`;
+            };
+
+            utterance.onend = () => {
+                if (isPlaying && index < currentStory.paragraphs.length - 1) {
+                    selectParagraph(index + 1);
+                    speakParagraph(index + 1);
+                } else if (index >= currentStory.paragraphs.length - 1) {
+                    stopAudio();
+                    document.getElementById('audioStatus').textContent = 'Completed';
+                }
+            };
+
+            currentUtterance = utterance;
+            speechSynthesis.speak(utterance);
+        }
+
+        // Set Speed
+        function setSpeed(speed) {
+            speechRate = speed;
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                btn.classList.toggle('active', parseFloat(btn.textContent) === speed);
+            });
+            
+            if (isPlaying) {
+                speechSynthesis.cancel();
+                speakParagraph(currentParagraphIndex);
+            }
+        }
+
+        // Close Reader
+        function closeReader() {
+            stopAudio();
+            const modal = document.getElementById('readerModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            const video = document.getElementById('storyVideo');
+            video.pause();
+        }
+
+        // Sign In with Google (Simulated)
+        function signInWithGoogle() {
+            // In production, use Google Identity Services
+            // This is a simulation for demo purposes
+            user = {
+                name: 'John Doe',
+                email: 'john.doe@gmail.com',
+                avatar: 'https://ui-avatars.com/api/?name=John+Doe&background=00d4aa&color=000&size=100'
+            };
+            
+            localStorage.setItem('storyverse_user', JSON.stringify(user));
+            updateUserUI();
+            closeAuthModal();
+            
+            // Show success notification
+            showNotification('Successfully signed in!');
+        }
+
+        // Update User UI
+        function updateUserUI() {
+            const signInBtn = document.getElementById('signInBtn');
+            const userProfile = document.getElementById('userProfile');
+            
+            if (user) {
+                signInBtn.style.display = 'none';
+                userProfile.classList.add('visible');
+                document.getElementById('userAvatar').src = user.avatar;
+                document.getElementById('userName').textContent = user.name;
+            } else {
+                signInBtn.style.display = 'flex';
+                userProfile.classList.remove('visible');
+            }
+        }
+
+        // Auth Modal
+        document.getElementById('signInBtn').addEventListener('click', () => {
+            document.getElementById('authModal').classList.add('active');
+        });
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        // Write Modal
+        function openWriteModal() {
+            if (!user) {
+                document.getElementById('authModal').classList.add('active');
+                return;
+            }
+            document.getElementById('writeModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeWriteModal() {
+            document.getElementById('writeModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Publish Story
+        function publishStory(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('storyTitle').value;
+            const category = document.getElementById('storyCategory').value;
+            const content = document.getElementById('storyContent').value;
+            
+            // Split content into paragraphs
+            const paragraphs = content.split('\n\n').filter(p => p.trim()).map(p => ({
+                text: p.trim(),
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4'
+            }));
+            
+            const newStory = {
+                id: stories.length + 1,
+                title,
+                category,
+                excerpt: paragraphs[0]?.text.substring(0, 150) + '...',
+                author: user.name,
+                authorAvatar: user.name.split(' ').map(n => n[0]).join(''),
+                readTime: Math.ceil(paragraphs.length * 2) + ' min',
+                views: '0',
+                likes: '0',
+                image: `https://picsum.photos/seed/${Date.now()}/600/400`,
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
+                paragraphs
+            };
+            
+            stories.unshift(newStory);
+            renderStories();
+            closeWriteModal();
+            
+            // Reset form
+            document.getElementById('storyForm').reset();
+            
+            showNotification('Story published successfully!');
+        }
+
+        // Show Notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'liquid-glass';
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                right: 32px;
+                padding: 16px 24px;
+                border-radius: 14px;
+                z-index: 400;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Add slide animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // User profile click - sign out option
+        document.getElementById('userProfile').addEventListener('click', () => {
+            if (confirm('Do you want to sign out?')) {
+                user = null;
+                localStorage.removeItem('storyverse_user');
+                updateUserUI();
+                showNotification('Signed out successfully');
+            }
+        });
+
+        // Hover effects for story cards
+        document.addEventListener('mouseover', (e) => {
+            const card = e.target.closest('.story-card');
+            if (card) {
+                const video = card.querySelector('.card-video');
+                if (video) video.play().catch(() => {});
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            const card = e.target.closest('.story-card');
+            if (card) {
+                const video = card.querySelector('.card-video');
+                if (video) {
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            }
+        });
+
+        // Load voices
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = () => {};
+        }
+    </script>
+</body>
+</html>
